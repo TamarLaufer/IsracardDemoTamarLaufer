@@ -26,6 +26,7 @@ const Home = ({ navigation }: NavigationProps) => {
       (b.title ?? '').toLowerCase().includes(qNorm),
     );
   }, [data, q]);
+  console.log(list);
 
   if (isLoading) return <Text style={{ padding: 16 }}>טוען ספרים…</Text>;
   if (isError) return <Text style={{ padding: 16 }}>שגיאה בטעינת ספרים</Text>;
@@ -45,7 +46,7 @@ const Home = ({ navigation }: NavigationProps) => {
       />
       <FlashList<Book>
         data={list}
-        keyExtractor={b => b.id}
+        keyExtractor={b => b.number}
         estimatedItemSize={110}
         renderItem={({ item }) => (
           <Pressable

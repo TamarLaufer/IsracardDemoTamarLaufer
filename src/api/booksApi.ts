@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export type Book = {
-  id: string;
+  number: string;
   title: string;
   releaseDate: string;
   cover: string;
