@@ -2,12 +2,18 @@ import React from 'react';
 import RootNavigator from './src/stackNavigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-const App = () => {
-  return (
-    <SafeAreaProvider>
-      <RootNavigator />
-    </SafeAreaProvider>
-  );
-};
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './src/store';
 
-export default App;
+export default function App() {
+  return (
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <RootNavigator />
+        </PersistGate>
+      </SafeAreaProvider>
+    </Provider>
+  );
+}
