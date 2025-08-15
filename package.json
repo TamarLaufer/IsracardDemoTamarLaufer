@@ -8,19 +8,27 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "connect-metro": "adb reverse tcp:8081 tcp:8081"
+    "connect-metro": "adb reverse tcp:8081 tcp:8081",
+    "connect-devtools": "adb reverse tcp:8097 tcp:8097",
+    "connect-all": "yarn connect-metro && yarn connect-devtools"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native/new-app-screen": "0.81.0",
     "@react-navigation/bottom-tabs": "^7.4.6",
     "@react-navigation/native": "^7.1.17",
     "@react-navigation/native-stack": "^7.3.25",
+    "@reduxjs/toolkit": "^2.8.2",
+    "@shopify/flash-list": "^1.7.6",
+    "lodash.debounce": "^4.0.8",
     "react": "19.1.0",
     "react-native": "0.81.0",
     "react-native-gesture-handler": "^2.28.0",
     "react-native-safe-area-context": "^5.6.0",
     "react-native-screens": "^4.14.1",
-    "react-native-vector-icons": "^10.3.0"
+    "react-native-vector-icons": "^10.3.0",
+    "react-redux": "^9.2.0",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
