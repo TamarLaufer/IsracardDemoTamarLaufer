@@ -29,7 +29,9 @@ export const { toggleFavorite, removeFavorite, clearFavorites } =
   favoritesSlice.actions;
 export default favoritesSlice.reducer;
 
-export const selectFavoriteIds = (s: { favorites?: { ids?: number[] } }) =>
-  Array.isArray(s.favorites?.ids) ? s.favorites!.ids : [];
-export const isFavorite = (s: { favorites: FavoritesState }, id: number) =>
-  s.favorites.ids.includes(id);
+//Selectors
+export const selectFavoriteIds = (state: { favorites?: { ids?: number[] } }) =>
+  Array.isArray(state.favorites?.ids) ? state.favorites!.ids : [];
+
+export const isFavorite = (state: { favorites: FavoritesState }, id: number) =>
+  state.favorites.ids.includes(id);

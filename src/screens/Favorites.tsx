@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -14,8 +14,8 @@ import { useGetBooksQuery } from '../api/booksApi';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import type { Book } from '../types/navigation';
 
-export default function Favorites({ navigation }: any) {
-  const favIds = useSelector((s: RootState) => selectFavoriteIds(s));
+const Favorites = ({ navigation }: any) => {
+  const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
   const favSet = useMemo(() => new Set(favIds), [favIds]);
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebouncedValue(searchText, 300);
@@ -39,6 +39,40 @@ export default function Favorites({ navigation }: any) {
       );
     });
   }, [favBooks, debouncedSearchText]);
+
+  const renderFavoriteItem = useCallback(
+    ({ item }: { item: Book }) => {
+      return (
+        <Pressable
+          onPress={() =>
+            navigation.navigate('BookDetails', { number: item.number })
+          }
+          style={{
+            flexDirection: 'row',
+            padding: 12,
+            gap: 12,
+            alignItems: 'center',
+          }}
+        >
+          <Image
+            source={{
+              uri:
+                item.cover || 'https://via.placeholder.com/60x90?text=No+Image',
+            }}
+            style={{ width: 60, height: 90, borderRadius: 6 }}
+          />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: '600' }} numberOfLines={1}>
+              {item.title}
+            </Text>
+            <Text>{item.releaseDate}</Text>
+          </View>
+          <Text>★</Text>
+        </Pressable>
+      );
+    },
+    [navigation],
+  );
 
   if (isLoading) return <Text style={{ padding: 16 }}>טוען ספרים...</Text>;
 
@@ -66,43 +100,18 @@ export default function Favorites({ navigation }: any) {
       />
       <FlatList<Book>
         data={filteredFavBooks}
-        keyExtractor={b => String(b.number)}
+        keyExtractor={book => String(book.number)}
+        keyboardShouldPersistTaps={'handled'}
         ListEmptyComponent={
           <Text style={{ padding: 16 }}>לא נמצאו תוצאות לחיפוש</Text>
         }
         ItemSeparatorComponent={() => (
           <View style={{ height: 1, backgroundColor: '#eee' }} />
         )}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() =>
-              navigation.navigate('BookDetails', { number: item.number })
-            }
-            style={{
-              flexDirection: 'row',
-              padding: 12,
-              gap: 12,
-              alignItems: 'center',
-            }}
-          >
-            <Image
-              source={{
-                uri:
-                  item.cover ||
-                  'https://via.placeholder.com/60x90?text=No+Image',
-              }}
-              style={{ width: 60, height: 90, borderRadius: 6 }}
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: '600' }} numberOfLines={1}>
-                {item.title}
-              </Text>
-              <Text>{item.releaseDate}</Text>
-            </View>
-            <Text>★</Text>
-          </Pressable>
-        )}
+        renderItem={renderFavoriteItem}
       />
     </>
   );
-}
+};
+
+export default Favorites;
