@@ -10,9 +10,9 @@ export const booksApi = createApi({
     getBooks: builder.query<Book[], void>({
       query: () => '/en/books',
       transformResponse: (raw: any[]) =>
-        raw.map(b => ({
-          ...b,
-          number: Number(b.number),
+        raw.map(book => ({
+          ...book,
+          number: Number(book.number),
         })),
       keepUnusedDataFor: 24 * 60 * 60,
     }),

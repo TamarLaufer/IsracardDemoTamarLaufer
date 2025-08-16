@@ -22,20 +22,20 @@ type NavigationProps = CompositeScreenProps<
 >;
 
 const Home = ({ navigation }: NavigationProps) => {
-  const { data, isLoading, isError } = useGetBooksQuery();
+  const { data: books, isLoading, isError } = useGetBooksQuery();
   const dispatch = useDispatch();
-  const [q, setQ] = useState('');
-  const debouncedQ = useDebouncedValue(q, 300);
+  const [searchText, setSearchText] = useState('');
+  const debouncedSearchText = useDebouncedValue(searchText, 300);
 
-  const favIds = useSelector((s: RootState) => selectFavoriteIds(s));
+  const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
   const favSet = useMemo(() => new Set(favIds), [favIds]);
 
   const list = useMemo(() => {
-    const qNorm = debouncedQ.trim().toLowerCase();
-    return (data ?? []).filter(b =>
-      (b.title ?? '').toLowerCase().includes(qNorm),
+    const normalizedQuery = debouncedSearchText.trim().toLowerCase();
+    return (books ?? []).filter(book =>
+      (book.title ?? '').toLowerCase().includes(normalizedQuery),
     );
-  }, [data, debouncedQ]);
+  }, [books, debouncedSearchText]);
 
   const handleToggleFavoritePress = useCallback(
     (id: number) => {
@@ -51,15 +51,52 @@ const Home = ({ navigation }: NavigationProps) => {
     [navigation],
   );
 
-  if (isLoading) return <Text style={{ padding: 16 }}>טוען ספרים…</Text>;
+  const renderBookItem = useCallback(
+    ({ item }: { item: Book }) => {
+      const isFav = favSet.has(item.number);
+
+      return (
+        <Pressable
+          onPress={() => handleRowPress(item.number)}
+          style={{
+            flexDirection: 'row',
+            padding: 12,
+            gap: 12,
+            alignItems: 'center',
+          }}
+        >
+          <Image
+            source={{
+              uri:
+                item.cover || 'https://via.placeholder.com/60x90?text=No+Image',
+            }}
+            style={{ width: 60, height: 90, borderRadius: 6 }}
+          />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: '600' }} numberOfLines={1}>
+              {item.title}
+            </Text>
+            <Text>{item.releaseDate}</Text>
+          </View>
+          <FavoriteButton
+            isFav={isFav}
+            onToggle={() => handleToggleFavoritePress(item.number)}
+          />
+        </Pressable>
+      );
+    },
+    [favSet, handleRowPress, handleToggleFavoritePress],
+  );
+
+  if (isLoading) return <Text style={{ padding: 16 }}>טוען ספרים...</Text>;
   if (isError) return <Text style={{ padding: 16 }}>שגיאה בטעינת ספרים</Text>;
 
   return (
     <View style={{ flex: 1 }}>
       <TextInput
-        placeholder="חיפוש…"
-        value={q}
-        onChangeText={setQ}
+        placeholder="חיפוש לפי שם הספר"
+        value={searchText}
+        onChangeText={setSearchText}
         style={{
           margin: 12,
           padding: 10,
@@ -72,44 +109,13 @@ const Home = ({ navigation }: NavigationProps) => {
         data={list}
         keyExtractor={item => String(item.number)}
         estimatedItemSize={110}
+        keyboardShouldPersistTaps={'handled'}
         extraData={favIds}
         ItemSeparatorComponent={() => (
           <View style={{ height: 1, backgroundColor: '#eee' }} />
         )}
         ListEmptyComponent={<Text style={{ padding: 16 }}>לא נמצאו ספרים</Text>}
-        renderItem={({ item }) => {
-          const isFav = favSet.has(item.number);
-          return (
-            <Pressable
-              onPress={() => handleRowPress(item.number)}
-              style={{
-                flexDirection: 'row',
-                padding: 12,
-                gap: 12,
-                alignItems: 'center',
-              }}
-            >
-              <Image
-                source={{
-                  uri:
-                    item.cover ||
-                    'https://via.placeholder.com/60x90?text=No+Image',
-                }}
-                style={{ width: 60, height: 90, borderRadius: 6 }}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: '600' }} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text>{item.releaseDate}</Text>
-              </View>
-              <FavoriteButton
-                isFav={isFav}
-                onToggle={() => handleToggleFavoritePress(item.number)}
-              />
-            </Pressable>
-          );
-        }}
+        renderItem={renderBookItem}
       />
     </View>
   );
