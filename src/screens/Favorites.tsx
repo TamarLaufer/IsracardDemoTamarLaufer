@@ -12,6 +12,7 @@ import { RootState } from '../store';
 import { selectFavoriteIds } from '../features/favoritesSlice';
 import { useGetBooksQuery } from '../api/booksApi';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import type { Book } from '../types/navigation';
 
 export default function Favorites({ navigation }: any) {
   const favIds = useSelector((s: RootState) => selectFavoriteIds(s));
@@ -63,7 +64,7 @@ export default function Favorites({ navigation }: any) {
           borderRadius: 10,
         }}
       />
-      <FlatList
+      <FlatList<Book>
         data={filteredFavBooks}
         keyExtractor={b => String(b.number)}
         ListEmptyComponent={
@@ -85,7 +86,11 @@ export default function Favorites({ navigation }: any) {
             }}
           >
             <Image
-              source={{ uri: item.cover }}
+              source={{
+                uri:
+                  item.cover ||
+                  'https://via.placeholder.com/60x90?text=No+Image',
+              }}
               style={{ width: 60, height: 90, borderRadius: 6 }}
             />
             <View style={{ flex: 1 }}>
