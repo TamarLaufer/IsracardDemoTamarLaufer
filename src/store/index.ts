@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
-import favorites from '../features/favoritesSlice'; // ← שימי לב לייבוא הנכון
+import favorites from '../features/favoritesSlice';
 import { booksApi } from '../api/booksApi';
 
 const rootReducer = combineReducers({
