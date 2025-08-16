@@ -1,13 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-export type Book = {
-  number: string;
-  title: string;
-  releaseDate: string;
-  cover: string;
-  description?: string;
-  pages?: number;
-};
+import type { Book } from '../types/navigation';
 
 export const booksApi = createApi({
   reducerPath: 'booksApi',
@@ -17,6 +9,11 @@ export const booksApi = createApi({
   endpoints: builder => ({
     getBooks: builder.query<Book[], void>({
       query: () => '/en/books',
+      transformResponse: (raw: any[]) =>
+        raw.map(b => ({
+          ...b,
+          number: Number(b.number),
+        })),
       keepUnusedDataFor: 24 * 60 * 60,
     }),
   }),
