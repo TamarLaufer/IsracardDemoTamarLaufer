@@ -1,97 +1,96 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+**IsracardDemoYourName (React Native)
+**
+Android demo app: Harry Potter books with favorites, search, sort, 24h cache, and i18n (he/en). Layout stays LTR.
 
-# Getting Started
+Tech / Packages
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+State/Data: Redux Toolkit, react-redux, redux-persist (persist reducer)
 
-## Step 1: Start Metro
+Fetching: RTK Query (or React Query) — optional redux-saga if needed
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Navigation: @react-navigation/native, native-stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+Lists: @shopify/flash-list
 
-```sh
-# Using npm
-npm start
+i18n: i18next, react-i18next, react-native-localize
 
-# OR using Yarn
-yarn start
-```
+Storage: @react-native-async-storage/async-storage
 
-## Step 2: Build and run your app
+Project Guidelines
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Create project: IsracardDemoYourName
 
-### Android
+Frequent commits with clear messages
 
-```sh
-# Using npm
-npm run android
+Feature branches per feature (e.g., feat/i18n, feat/sort)
 
-# OR using Yarn
+Run (Android)
+yarn install
+yarn start --reset-cache
 yarn android
-```
 
-### iOS
+**App Structure
+**
+Tabs: Home, Favorites
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+Home
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+Fetch from: https://potterapi-fedeperin.vercel.app/en/books
 
-```sh
-bundle install
-```
+Cache for 24h (then refetch)
 
-Then, and every time you update your native dependencies, run:
+List item: title, releaseDate, cover
 
-```sh
-bundle exec pod install
-```
+Press → Book Details
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+Book Details
 
-```sh
-# Using npm
-npm run ios
+Show: title, releaseDate, cover, description, pages
 
-# OR using Yarn
-yarn ios
-```
+Toggle Favorite
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Favorites
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Shows favorited books; removable
 
-## Step 3: Modify your app
+Persisted via storage (survives app restarts)
 
-Now that you have successfully run the app, let's make changes!
+Search (both tabs)
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Debounced search
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+Filter by title (both tabs)
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+In Favorites also filter by description
 
-## Congratulations! :tada:
+Sorting
 
-You've successfully run and modified your React Native App. :partying_face:
+Title A–Z
 
-### Now what?
+Pages
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+Release date
 
-# Troubleshooting
+i18n (Bonus)
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+he/en via i18next; language switcher
 
-# Learn More
+Persist selected language
 
-To learn more about React Native, take a look at the following resources:
+No RTL flip (layout always LTR)
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Suggested Commits (Conventional)
+
+feat(books): RTK Query with 24h cache
+
+feat(favorites): persist favorites
+
+feat(search): debounced title/description
+
+feat(sort): title/pages/releaseDate
+
+feat(i18n): he/en + switcher (LTR layout)
+
+License
+
+MIT
