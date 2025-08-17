@@ -1,4 +1,3 @@
-// src/screens/BookDetails.tsx
 import React, { useCallback, useLayoutEffect } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
