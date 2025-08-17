@@ -1,0 +1,41 @@
+{
+  "COMMON": {
+    "loading": "טוען...",
+    "try_again_later": "יש לנסות מאוחר יותר",
+    "no_results": "לא נמצאו תוצאות לחיפוש",
+    "switch_to_he": "עברית",
+    "switch_to_en": "English"
+  },
+  "HOME_PAGE": {
+    "error_loading_books": "שגיאה בטעינת ספרים",
+    "loading_books": "טוען ספרים...",
+    "search_by_title": "חיפוש לפי שם הספר",
+    "no_books_found": "לא נמצאו ספרים",
+    "title": "דף הבית"
+  },
+  "FAVORITE_PAGE": {
+    "title": "מועדפים",
+    "error_loading_favorites": "שגיאה בטעינת הספרים",
+    "loading_favorites": "טוען ספרים...",
+    "search_by_title_or_desc": "חיפוש לפי שם הספר או תיאור",
+    "no_favorites_yet": "אין מועדפים עדיין",
+    "no_results": "לא נמצאו תוצאות לחיפוש"
+  },
+  "BOOK_DETAILS_PAGE": {
+    "default_title": "ספר",
+    "loading": "טוען...",
+    "error_loading_book": "שגיאה בטעינת הספר, יש לנסות מאוחר יותר",
+    "not_found": "לא נמצא ספר",
+    "release_label": "תאריך יציאה:",
+    "pages_label": "עמודים:",
+    "description_label": "תיאור"
+  },
+  "COMPONENTS": {
+    "DROPDOWN": {
+      "label_sort_by": "מיון לפי",
+      "date_old_new": "תאריך הוצאה",
+      "pages_few_many": "עמודים",
+      "title_az": "א-ת"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "COMMON": {
+    "loading": "Loading...",
+    "try_again_later": "Please try again later",
+    "no_results": "No results found",
+    "switch_to_he": "Hebrew",
+    "switch_to_en": "English"
+  },
+  "HOME_PAGE": {
+    "error_loading_books": "Error loading books",
+    "loading_books": "Loading books...",
+    "search_by_title": "Search by title",
+    "no_books_found": "No books found",
+    "title": "Home"
+  },
+  "FAVORITE_PAGE": {
+    "title": "Favorites",
+    "error_loading_favorites": "Error loading books",
+    "loading_favorites": "Loading books...",
+    "search_by_title_or_desc": "Search by title or description",
+    "no_favorites_yet": "No favorites yet",
+    "no_results": "No results found"
+  },
+  "BOOK_DETAILS_PAGE": {
+    "default_title": "Book",
+    "loading": "Loading...",
+    "error_loading_book": "Error loading book, please try again later",
+    "not_found": "Book not found",
+    "release_label": "Release:",
+    "pages_label": "Pages:",
+    "description_label": "Description"
+  },
+  "COMPONENTS": {
+    "DROPDOWN": {
+      "label_sort_by": "Sort by",
+      "date_old_new": "Release date",
+      "pages_few_many": "Pages",
+      "title_az": "Title (A–Z)"
+    }
+  }
+}

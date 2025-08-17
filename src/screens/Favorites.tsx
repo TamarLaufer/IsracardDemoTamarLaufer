@@ -15,12 +15,14 @@ import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { Book, NavigationProps } from '../types/navigation';
 import DropDownSort from '../components/DropDownSort';
 import { sortBooks, SortBy } from '../functions';
+import { useTranslation } from 'react-i18next';
 
 const Favorites = ({ navigation }: NavigationProps) => {
   const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
   const favSet = useMemo(() => new Set(favIds), [favIds]);
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebouncedValue(searchText, 300);
+  const { t } = useTranslation();
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.TITLE_AZ);
   const { data: books, isLoading, isError } = useGetBooksQuery();
@@ -82,21 +84,31 @@ const Favorites = ({ navigation }: NavigationProps) => {
     [navigation],
   );
 
-  if (isLoading) return <Text style={{ padding: 16 }}>טוען ספרים...</Text>;
+  if (isLoading)
+    return (
+      <Text style={{ padding: 16 }}>
+        {t('FAVORITE_PAGE.loading_favorites')}
+      </Text>
+    );
 
-  if (isError) return <Text style={{ padding: 16 }}>שגיאה בטעינת הספרים </Text>;
+  if (isError)
+    return (
+      <Text style={{ padding: 16 }}>
+        {t('FAVORITE_PAGE.error_loading_favorites')}
+      </Text>
+    );
 
   if (!favBooks.length)
     return (
       <View style={{ padding: 16 }}>
-        <Text>אין מועדפים עדיין</Text>
+        <Text>{t('FAVORITE_PAGE.no_favorites_yet')}</Text>
       </View>
     );
 
   return (
     <>
       <TextInput
-        placeholder="חיפוש לפי שם הספר או תיאור"
+        placeholder={t('FAVORITE_PAGE.search_by_title_or_desc')}
         value={searchText}
         onChangeText={setSearchText}
         style={{
@@ -112,7 +124,7 @@ const Favorites = ({ navigation }: NavigationProps) => {
         keyExtractor={book => String(book.number)}
         keyboardShouldPersistTaps={'handled'}
         ListEmptyComponent={
-          <Text style={{ padding: 16 }}>לא נמצאו תוצאות לחיפוש</Text>
+          <Text style={{ padding: 16 }}>{t('FAVORITE_PAGE.no_results')}</Text>
         }
         ItemSeparatorComponent={() => (
           <View style={{ height: 1, backgroundColor: '#eee' }} />

@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
 import { SortBy } from '../functions';
+import { useTranslation } from 'react-i18next';
 
 type DropDownSortPropsType = {
   sortBy: SortBy;
@@ -7,6 +8,7 @@ type DropDownSortPropsType = {
 };
 
 const DropDownSort = ({ sortBy, onChange }: DropDownSortPropsType) => {
+  const { t } = useTranslation();
   const Item = ({ label, value }: { label: string; value: SortBy }) => (
     <Pressable onPress={() => onChange(value)}>
       <Text
@@ -29,9 +31,15 @@ const DropDownSort = ({ sortBy, onChange }: DropDownSortPropsType) => {
         paddingVertical: 4,
       }}
     >
-      <Item label="א-ת" value={SortBy.TITLE_AZ} />
-      <Item label="עמודים" value={SortBy.PAGES} />
-      <Item label="תאריך הוצאה" value={SortBy.RELEASE_DATE} />
+      <Item label={t('COMPONENTS.DROPDOWN.title_az')} value={SortBy.TITLE_AZ} />
+      <Item
+        label={t('COMPONENTS.DROPDOWN.pages_few_many')}
+        value={SortBy.PAGES}
+      />
+      <Item
+        label={t('COMPONENTS.DROPDOWN.date_old_new')}
+        value={SortBy.RELEASE_DATE}
+      />
     </View>
   );
 };

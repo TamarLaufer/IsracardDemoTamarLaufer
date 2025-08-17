@@ -10,10 +10,13 @@ import { RootState } from '../store';
 import { selectFavoriteIds, toggleFavorite } from '../features/favoritesSlice';
 import DropDownSort from '../components/DropDownSort';
 import { sortBooks, SortBy } from '../functions';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const Home = ({ navigation }: NavigationProps) => {
   const { data: books, isLoading, isError } = useGetBooksQuery();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebouncedValue(searchText, 300);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.TITLE_AZ);
@@ -80,13 +83,18 @@ const Home = ({ navigation }: NavigationProps) => {
     [favSet, handleRowPress, handleToggleFavoritePress],
   );
 
-  if (isLoading) return <Text style={{ padding: 16 }}>טוען ספרים...</Text>;
-  if (isError) return <Text style={{ padding: 16 }}>שגיאה בטעינת ספרים</Text>;
+  if (isLoading)
+    return <Text style={{ padding: 16 }}>{t('HOME_PAGE.loading_books')}</Text>;
+  if (isError)
+    return (
+      <Text style={{ padding: 16 }}>{t('HOME_PAGE.error_loading_books')}</Text>
+    );
 
   return (
     <View style={{ flex: 1 }}>
+      <LanguageSwitcher />
       <TextInput
-        placeholder="חיפוש לפי שם הספר"
+        placeholder={t('HOME_PAGE.search_by_title')}
         value={searchText}
         onChangeText={setSearchText}
         style={{
@@ -106,7 +114,9 @@ const Home = ({ navigation }: NavigationProps) => {
         ItemSeparatorComponent={() => (
           <View style={{ height: 1, backgroundColor: '#eee' }} />
         )}
-        ListEmptyComponent={<Text style={{ padding: 16 }}>לא נמצאו ספרים</Text>}
+        ListEmptyComponent={
+          <Text style={{ padding: 16 }}>{t('HOME_PAGE.no_books_found')}</Text>
+        }
         renderItem={renderBookItem}
       />
     </View>
