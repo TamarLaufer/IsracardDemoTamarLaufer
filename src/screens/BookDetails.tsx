@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { selectFavoriteIds, toggleFavorite } from '../features/favoritesSlice';
 import FavoriteButton from '../components/FavoriteButton';
+import { useTranslation } from 'react-i18next';
 
 type NavigationProps = NativeStackScreenProps<
   RootStackParamList,
@@ -15,7 +16,7 @@ type NavigationProps = NativeStackScreenProps<
 
 export default function BookDetails({ route, navigation }: NavigationProps) {
   const { number } = route.params;
-
+  const { t } = useTranslation();
   const { book, isLoading, isError } = useGetBooksQuery(undefined, {
     selectFromResult: ({ data, isLoading, isError }) => ({
       book: data?.find(oneBook => oneBook.number === number),
@@ -47,7 +48,7 @@ export default function BookDetails({ route, navigation }: NavigationProps) {
     return (
       <View style={{ padding: 16, gap: 8 }}>
         <ActivityIndicator />
-        <Text>טוען...</Text>
+        <Text>{t('BOOK_DETAILS_PAGE.loading')}</Text>
       </View>
     );
   }
@@ -55,7 +56,7 @@ export default function BookDetails({ route, navigation }: NavigationProps) {
   if (isError) {
     return (
       <View style={{ padding: 16 }}>
-        <Text>שגיאה בטעינת הספר, יש לנסות מאוחר יותר</Text>
+        <Text>{t('BOOK_DETAILS_PAGE.error_loading_book')}</Text>
       </View>
     );
   }
@@ -63,7 +64,7 @@ export default function BookDetails({ route, navigation }: NavigationProps) {
   if (!book) {
     return (
       <View style={{ padding: 16 }}>
-        <Text>לא נמצא ספר</Text>
+        <Text>{t('BOOK_DETAILS_PAGE.not_found')}</Text>
       </View>
     );
   }
@@ -85,8 +86,12 @@ export default function BookDetails({ route, navigation }: NavigationProps) {
       />
 
       <Text style={{ fontSize: 22, fontWeight: '700' }}>{book.title}</Text>
-      <Text>Release: {book.releaseDate}</Text>
-      {book.pages != null ? <Text>Pages: {book.pages}</Text> : null}
+      <Text> {book.releaseDate}</Text>
+      {book.pages != null ? (
+        <Text>
+          {t('BOOK_DETAILS_PAGE.pages_label')} {book.pages}
+        </Text>
+      ) : null}
       {book.description ? <Text>{book.description}</Text> : null}
     </ScrollView>
   );
