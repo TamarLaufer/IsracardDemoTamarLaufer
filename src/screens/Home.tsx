@@ -1,11 +1,4 @@
-import type { CompositeScreenProps } from '@react-navigation/native';
-import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type {
-  Book,
-  RootStackParamList,
-  TabsParamList,
-} from '../types/navigation';
+import { Book, NavigationProps } from '../types/navigation';
 import React, { useMemo, useCallback, useState } from 'react';
 import { Image, Pressable, Text, TextInput, View } from 'react-native';
 import { useGetBooksQuery } from '../api/booksApi';
@@ -15,18 +8,15 @@ import FavoriteButton from '../components/FavoriteButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { selectFavoriteIds, toggleFavorite } from '../features/favoritesSlice';
-
-type NavigationProps = CompositeScreenProps<
-  BottomTabScreenProps<TabsParamList, 'Home'>,
-  NativeStackScreenProps<RootStackParamList>
->;
+import DropDownSort from '../components/DropDownSort';
+import { sortBooks, SortBy } from '../functions';
 
 const Home = ({ navigation }: NavigationProps) => {
   const { data: books, isLoading, isError } = useGetBooksQuery();
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebouncedValue(searchText, 300);
-
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.TITLE_AZ);
   const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
   const favSet = useMemo(() => new Set(favIds), [favIds]);
 
@@ -36,6 +26,8 @@ const Home = ({ navigation }: NavigationProps) => {
       (book.title ?? '').toLowerCase().includes(normalizedQuery),
     );
   }, [books, debouncedSearchText]);
+
+  const sortedList = useMemo(() => sortBooks(list, sortBy), [list, sortBy]);
 
   const handleToggleFavoritePress = useCallback(
     (id: number) => {
@@ -104,9 +96,9 @@ const Home = ({ navigation }: NavigationProps) => {
           borderRadius: 10,
         }}
       />
-
+      <DropDownSort sortBy={sortBy} onChange={setSortBy} />
       <FlashList<Book>
-        data={list}
+        data={sortedList}
         keyExtractor={item => String(item.number)}
         estimatedItemSize={110}
         keyboardShouldPersistTaps={'handled'}
