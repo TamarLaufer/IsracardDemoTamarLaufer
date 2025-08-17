@@ -12,14 +12,17 @@ import { RootState } from '../store';
 import { selectFavoriteIds } from '../features/favoritesSlice';
 import { useGetBooksQuery } from '../api/booksApi';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
-import type { Book } from '../types/navigation';
+import { Book, NavigationProps } from '../types/navigation';
+import DropDownSort from '../components/DropDownSort';
+import { sortBooks, SortBy } from '../functions';
 
-const Favorites = ({ navigation }: any) => {
+const Favorites = ({ navigation }: NavigationProps) => {
   const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
   const favSet = useMemo(() => new Set(favIds), [favIds]);
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebouncedValue(searchText, 300);
 
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.TITLE_AZ);
   const { data: books, isLoading, isError } = useGetBooksQuery();
 
   const favBooks = useMemo(
@@ -39,6 +42,11 @@ const Favorites = ({ navigation }: any) => {
       );
     });
   }, [favBooks, debouncedSearchText]);
+
+  const sortedBooks = useMemo(
+    () => sortBooks(filteredFavBooks, sortBy),
+    [filteredFavBooks, sortBy],
+  );
 
   const renderFavoriteItem = useCallback(
     ({ item }: { item: Book }) => {
@@ -98,8 +106,9 @@ const Favorites = ({ navigation }: any) => {
           borderRadius: 10,
         }}
       />
+      <DropDownSort sortBy={sortBy} onChange={setSortBy} />
       <FlatList<Book>
-        data={filteredFavBooks}
+        data={sortedBooks}
         keyExtractor={book => String(book.number)}
         keyboardShouldPersistTaps={'handled'}
         ListEmptyComponent={
