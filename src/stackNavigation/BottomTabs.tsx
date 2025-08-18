@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from '../screens/Home';
+import Home from '../screens/Home/Home';
 import Favorites from '../screens/Favorites';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TabsParamList } from '../types/navigation';

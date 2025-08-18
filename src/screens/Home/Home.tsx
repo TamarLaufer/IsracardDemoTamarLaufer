@@ -1,17 +1,27 @@
-import { Book, NavigationProps } from '../types/navigation';
+import { Book, NavigationProps } from '../../types/navigation';
 import React, { useMemo, useCallback, useState } from 'react';
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
-import { useGetBooksQuery } from '../api/booksApi';
+import { Image, Text, TextInput, View } from 'react-native';
+import { useGetBooksQuery } from '../../api/booksApi';
 import { FlashList } from '@shopify/flash-list';
-import { useDebouncedValue } from '../hooks/useDebouncedValue';
-import FavoriteButton from '../components/FavoriteButton';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import FavoriteButton from '../../components/FavoriteButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { selectFavoriteIds, toggleFavorite } from '../features/favoritesSlice';
-import DropDownSort from '../components/DropDownSort';
-import { sortBooks, SortBy } from '../functions';
+import { RootState } from '../../store';
+import {
+  selectFavoriteIds,
+  toggleFavorite,
+} from '../../features/favoritesSlice';
+import DropDownSort from '../../components/DropDownSort';
+import { sortBooks, SortBy } from '../../functions';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import LanguageSwitcher from '../../components/LanguageSwitcher/LanguageSwitcher';
+import {
+  ChangeModePress,
+  ChangeModeText,
+  HomeContainer,
+  PressableBookGrid,
+  PressableBookList,
+} from './Home.styles';
 
 const Home = ({ navigation }: NavigationProps) => {
   const { data: books, isLoading, isError } = useGetBooksQuery();
@@ -22,6 +32,7 @@ const Home = ({ navigation }: NavigationProps) => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.TITLE_AZ);
   const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
   const favSet = useMemo(() => new Set(favIds), [favIds]);
+  const [isGrid, setGrid] = useState(false);
 
   const list = useMemo(() => {
     const normalizedQuery = debouncedSearchText.trim().toLowerCase();
@@ -40,8 +51,8 @@ const Home = ({ navigation }: NavigationProps) => {
   );
 
   const handleRowPress = useCallback(
-    (id: number) => {
-      navigation.navigate('BookDetails', { number: id });
+    (id: number, title?: string) => {
+      navigation.navigate('BookDetails', { number: id, title });
     },
     [navigation],
   );
@@ -50,15 +61,43 @@ const Home = ({ navigation }: NavigationProps) => {
     ({ item }: { item: Book }) => {
       const isFav = favSet.has(item.number);
 
+      if (isGrid) {
+        return (
+          <PressableBookGrid
+            onPress={() => handleRowPress(item.number, item.title)}
+            style={{}}
+          >
+            <Image
+              source={{
+                uri:
+                  item.cover ||
+                  'https://via.placeholder.com/300x450?text=No+Image',
+              }}
+              style={{
+                width: '100%',
+                aspectRatio: 2 / 3,
+                borderRadius: 6,
+                marginBottom: 8,
+              }}
+              resizeMode="cover"
+            />
+            <Text style={{ fontWeight: '600' }} numberOfLines={3}>
+              {item.title}
+            </Text>
+            <Text>{item.releaseDate}</Text>
+            <View style={{ alignItems: 'flex-end', marginTop: 8 }}>
+              <FavoriteButton
+                isFav={isFav}
+                onToggle={() => handleToggleFavoritePress(item.number)}
+              />
+            </View>
+          </PressableBookGrid>
+        );
+      }
+
       return (
-        <Pressable
-          onPress={() => handleRowPress(item.number)}
-          style={{
-            flexDirection: 'row',
-            padding: 12,
-            gap: 12,
-            alignItems: 'center',
-          }}
+        <PressableBookList
+          onPress={() => handleRowPress(item.number, item.title)}
         >
           <Image
             source={{
@@ -77,10 +116,10 @@ const Home = ({ navigation }: NavigationProps) => {
             isFav={isFav}
             onToggle={() => handleToggleFavoritePress(item.number)}
           />
-        </Pressable>
+        </PressableBookList>
       );
     },
-    [favSet, handleRowPress, handleToggleFavoritePress],
+    [favSet, handleRowPress, handleToggleFavoritePress, isGrid],
   );
 
   if (isLoading)
@@ -91,8 +130,11 @@ const Home = ({ navigation }: NavigationProps) => {
     );
 
   return (
-    <View style={{ flex: 1 }}>
+    <HomeContainer>
       <LanguageSwitcher />
+      <ChangeModePress onPress={() => setGrid(!isGrid)}>
+        <ChangeModeText>{t('HOME_PAGE.switch_display')}</ChangeModeText>
+      </ChangeModePress>
       <TextInput
         placeholder={t('HOME_PAGE.search_by_title')}
         value={searchText}
@@ -108,18 +150,22 @@ const Home = ({ navigation }: NavigationProps) => {
       <FlashList<Book>
         data={sortedList}
         keyExtractor={item => String(item.number)}
-        estimatedItemSize={110}
-        keyboardShouldPersistTaps={'handled'}
-        extraData={favIds}
-        ItemSeparatorComponent={() => (
-          <View style={{ height: 1, backgroundColor: '#eee' }} />
-        )}
+        estimatedItemSize={isGrid ? 260 : 110}
+        numColumns={isGrid ? 3 : 1}
+        contentContainerStyle={{ padding: isGrid ? 6 : 0 }}
+        keyboardShouldPersistTaps="handled"
+        extraData={[favIds, isGrid]}
+        ItemSeparatorComponent={
+          !isGrid
+            ? () => <View style={{ height: 1, backgroundColor: '#eee' }} />
+            : undefined
+        }
         ListEmptyComponent={
           <Text style={{ padding: 16 }}>{t('HOME_PAGE.no_books_found')}</Text>
         }
         renderItem={renderBookItem}
       />
-    </View>
+    </HomeContainer>
   );
 };
 

@@ -7,7 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabsParamList>;
-  BookDetails: { number: number };
+  BookDetails: { number: number; title?: string };
 };
 
 export type NavigationProps = CompositeScreenProps<
