@@ -1,10 +1,12 @@
 import React from 'react';
-import { ActivityIndicator, Image } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
 import {
+  CoverImage,
   DetailText,
+  ScrollInner,
   StateText,
   StateWrap,
   StyledScroll,
@@ -56,25 +58,22 @@ export default function BookDetails({ route }: NavigationProps) {
 
   return (
     <StyledScroll>
-      <TitleText>{t('BOOK_DETAILS_PAGE.about_book')}</TitleText>
-      <Image
-        source={{
-          uri:
-            book.cover || 'https://via.placeholder.com/180x260?text=No+Image',
-        }}
-        style={{
-          width: 180,
-          height: 260,
-          alignSelf: 'center',
-          borderRadius: 8,
-          marginVertical: 8,
-        }}
-      />
+      <ScrollInner>
+        <TitleText>{t('BOOK_DETAILS_PAGE.about_book')}</TitleText>
+        <CoverImage
+          source={{
+            uri:
+              book.cover || 'https://via.placeholder.com/180x260?text=No+Image',
+          }}
+        />
 
-      <TitleText>{book.title}</TitleText>
-      <DetailText> {book.releaseDate}</DetailText>
-      {book.pages != null ? <DetailText>Pages: {book.pages}</DetailText> : null}
-      {book.description ? <DetailText>{book.description}</DetailText> : null}
+        <TitleText>{book.title}</TitleText>
+        <DetailText> {book.releaseDate}</DetailText>
+        {book.pages != null ? (
+          <DetailText>Pages: {book.pages}</DetailText>
+        ) : null}
+        {book.description ? <DetailText>{book.description}</DetailText> : null}
+      </ScrollInner>
     </StyledScroll>
   );
 }

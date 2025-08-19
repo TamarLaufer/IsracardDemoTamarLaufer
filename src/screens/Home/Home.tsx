@@ -1,6 +1,6 @@
 import { Book, NavigationProps } from '../../types/navigation';
 import React, { useMemo, useCallback, useState } from 'react';
-import { Image, Text, TextInput, View } from 'react-native';
+import { Text } from 'react-native';
 import { useGetBooksQuery } from '../../api/booksApi';
 import { FlashList } from '@shopify/flash-list';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
@@ -11,16 +11,24 @@ import {
   selectFavoriteIds,
   toggleFavorite,
 } from '../../features/favoritesSlice';
-import DropDownSort from '../../components/DropDownSort';
+import DropDownSort from '../../components/DropDownSort/DropDownSort';
 import { sortBooks, SortBy } from '../../functions';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../../components/LanguageSwitcher/LanguageSwitcher';
 import {
+  BookTitle,
   ChangeModePress,
   ChangeModeText,
+  Flex1,
+  GridCoverImage,
   HomeContainer,
+  ItemSeparator,
+  ListCoverImage,
   PressableBookGrid,
   PressableBookList,
+  RightAligned,
+  SearchInput,
+  StateText,
 } from './Home.styles';
 
 const Home = ({ navigation }: NavigationProps) => {
@@ -65,32 +73,23 @@ const Home = ({ navigation }: NavigationProps) => {
         return (
           <PressableBookGrid
             onPress={() => handleRowPress(item.number, item.title)}
-            style={{}}
           >
-            <Image
+            <GridCoverImage
               source={{
                 uri:
                   item.cover ||
                   'https://via.placeholder.com/300x450?text=No+Image',
               }}
-              style={{
-                width: '100%',
-                aspectRatio: 2 / 3,
-                borderRadius: 6,
-                marginBottom: 8,
-              }}
               resizeMode="cover"
             />
-            <Text style={{ fontWeight: '600' }} numberOfLines={3}>
-              {item.title}
-            </Text>
+            <BookTitle numberOfLines={3}>{item.title}</BookTitle>
             <Text>{item.releaseDate}</Text>
-            <View style={{ alignItems: 'flex-end', marginTop: 8 }}>
+            <RightAligned>
               <FavoriteButton
                 isFav={isFav}
                 onToggle={() => handleToggleFavoritePress(item.number)}
               />
-            </View>
+            </RightAligned>
           </PressableBookGrid>
         );
       }
@@ -99,19 +98,16 @@ const Home = ({ navigation }: NavigationProps) => {
         <PressableBookList
           onPress={() => handleRowPress(item.number, item.title)}
         >
-          <Image
+          <ListCoverImage
             source={{
               uri:
                 item.cover || 'https://via.placeholder.com/60x90?text=No+Image',
             }}
-            style={{ width: 60, height: 90, borderRadius: 6 }}
           />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontWeight: '600' }} numberOfLines={1}>
-              {item.title}
-            </Text>
+          <Flex1>
+            <BookTitle numberOfLines={1}>{item.title}</BookTitle>
             <Text>{item.releaseDate}</Text>
-          </View>
+          </Flex1>
           <FavoriteButton
             isFav={isFav}
             onToggle={() => handleToggleFavoritePress(item.number)}
@@ -122,12 +118,9 @@ const Home = ({ navigation }: NavigationProps) => {
     [favSet, handleRowPress, handleToggleFavoritePress, isGrid],
   );
 
-  if (isLoading)
-    return <Text style={{ padding: 16 }}>{t('HOME_PAGE.loading_books')}</Text>;
+  if (isLoading) return <StateText>{t('HOME_PAGE.loading_books')}</StateText>;
   if (isError)
-    return (
-      <Text style={{ padding: 16 }}>{t('HOME_PAGE.error_loading_books')}</Text>
-    );
+    return <StateText>{t('HOME_PAGE.error_loading_books')}</StateText>;
 
   return (
     <HomeContainer>
@@ -135,16 +128,10 @@ const Home = ({ navigation }: NavigationProps) => {
       <ChangeModePress onPress={() => setGrid(!isGrid)}>
         <ChangeModeText>{t('HOME_PAGE.switch_display')}</ChangeModeText>
       </ChangeModePress>
-      <TextInput
+      <SearchInput
         placeholder={t('HOME_PAGE.search_by_title')}
         value={searchText}
         onChangeText={setSearchText}
-        style={{
-          margin: 12,
-          padding: 10,
-          backgroundColor: '#eee',
-          borderRadius: 10,
-        }}
       />
       <DropDownSort sortBy={sortBy} onChange={setSortBy} />
       <FlashList<Book>
@@ -155,13 +142,9 @@ const Home = ({ navigation }: NavigationProps) => {
         contentContainerStyle={{ padding: isGrid ? 6 : 0 }}
         keyboardShouldPersistTaps="handled"
         extraData={[favIds, isGrid]}
-        ItemSeparatorComponent={
-          !isGrid
-            ? () => <View style={{ height: 1, backgroundColor: '#eee' }} />
-            : undefined
-        }
+        ItemSeparatorComponent={!isGrid ? () => <ItemSeparator /> : undefined}
         ListEmptyComponent={
-          <Text style={{ padding: 16 }}>{t('HOME_PAGE.no_books_found')}</Text>
+          <StateText>{t('HOME_PAGE.no_books_found')}</StateText>
         }
         renderItem={renderBookItem}
       />

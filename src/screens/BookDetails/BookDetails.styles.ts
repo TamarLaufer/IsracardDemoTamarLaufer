@@ -1,36 +1,45 @@
-import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
+import { ScrollView } from 'react-native';
 
-export const StateWrap = styled.View`
-  flex: 1;
-  padding: 16px;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.background};
-`;
+export const StateWrap = styled.View(({ theme }) => ({
+  flex: 1,
+  padding: 16,
+  gap: 8,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: theme.background,
+}));
 
-export const StateText = styled.Text`
-  color: ${({ theme }) => theme.textPrimary};
-  font-size: 20;
-  font-weight: 500;
-`;
+export const StateText = styled.Text(({ theme }) => ({
+  color: theme.textPrimary,
+  fontSize: 20,
+  fontWeight: '500',
+}));
 
-export const TitleText = styled.Text`
-  color: ${({ theme }) => theme.textPrimary};
-  font-size: 20;
-  font-weight: 700;
-`;
+export const TitleText = styled.Text(({ theme }) => ({
+  color: theme.textPrimary,
+  fontSize: 20,
+  fontWeight: '700',
+}));
 
-export const DetailText = styled.Text`
-  color: ${({ theme }) => theme.textPrimary};
-  font-size: 18;
-  font-weight: 400;
-`;
+export const DetailText = styled.Text(({ theme }) => ({
+  color: theme.textPrimary,
+  fontSize: 18,
+  fontWeight: '400',
+}));
 
-export const StyledScroll = styled(ScrollView).attrs({
-  contentContainerStyle: {
-    padding: 16,
-    gap: 12,
-  },
-})``;
+export const StyledScroll = styled(ScrollView)({});
+
+export const ScrollInner = styled.View({
+  padding: 16,
+  gap: 12,
+});
+
+export const CoverImage = styled.Image({
+  resizeMode: 'cover',
+  width: 180,
+  height: 260,
+  alignSelf: 'center',
+  borderRadius: 8,
+  marginVertical: 8,
+});

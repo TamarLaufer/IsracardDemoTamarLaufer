@@ -8,14 +8,13 @@ import { RootStackParamList } from '../types/navigation';
 import BookDetails from '../screens/BookDetails/BookDetails';
 import FavoriteHeaderRight from '../components/FavoriteHeaderRight/FavoriteHeaderRight';
 import { SPACING } from '../consts';
-import { I18nManager, useWindowDimensions, View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const { width } = useWindowDimensions();
   const TITLE_MAX = Math.max(0, width - SPACING * 2);
-  const rtl = I18nManager.isRTL;
 
   return (
     <NavigationContainer>
@@ -35,11 +34,20 @@ export default function RootNavigator() {
           component={BookDetails}
           options={({ route }) => ({
             headerTitle: props => (
-              <View style={{ maxWidth: TITLE_MAX, flexShrink: 1 }}>
+              <View
+                style={{
+                  maxWidth: TITLE_MAX,
+                  flexShrink: 1,
+                  padding: 10,
+                }}
+              >
                 <HeaderTitle
                   {...props}
                   numberOfLines={2}
-                  style={{ textAlign: rtl ? 'right' : 'left' }}
+                  style={{
+                    textAlign: 'center',
+                    flexWrap: 'wrap',
+                  }}
                 >
                   {route.params?.title ?? 'Book'}
                 </HeaderTitle>
