@@ -1,10 +1,7 @@
-import { Book, NavigationProps } from '../../types/navigation';
+import { NavigationProps } from '../../types/navigation';
 import React, { useMemo, useCallback, useState } from 'react';
-import { Text } from 'react-native';
 import { useGetBooksQuery } from '../../api/booksApi';
-import { FlashList } from '@shopify/flash-list';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
-import FavoriteButton from '../../components/FavoriteButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import {
@@ -16,20 +13,16 @@ import { sortBooks, SortBy } from '../../functions';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../../components/LanguageSwitcher/LanguageSwitcher';
 import {
-  BookTitle,
+  BookGrid,
   ChangeModePress,
   ChangeModeText,
-  Flex1,
-  GridCoverImage,
   HomeContainer,
-  ItemSeparator,
-  ListCoverImage,
-  PressableBookGrid,
-  PressableBookList,
-  RightAligned,
   SearchInput,
   StateText,
 } from './Home.styles';
+import GridBookItem from '../../components/GridBookItem/GridBookItem';
+import ListBookItem from '../../components/ListBookItem/ListBookItem';
+import { ScrollView } from 'react-native';
 
 const Home = ({ navigation }: NavigationProps) => {
   const { data: books, isLoading, isError } = useGetBooksQuery();
@@ -65,59 +58,6 @@ const Home = ({ navigation }: NavigationProps) => {
     [navigation],
   );
 
-  const renderBookItem = useCallback(
-    ({ item }: { item: Book }) => {
-      const isFav = favSet.has(item.number);
-
-      if (isGrid) {
-        return (
-          <PressableBookGrid
-            onPress={() => handleRowPress(item.number, item.title)}
-          >
-            <GridCoverImage
-              source={{
-                uri:
-                  item.cover ||
-                  'https://via.placeholder.com/300x450?text=No+Image',
-              }}
-              resizeMode="cover"
-            />
-            <BookTitle numberOfLines={3}>{item.title}</BookTitle>
-            <Text>{item.releaseDate}</Text>
-            <RightAligned>
-              <FavoriteButton
-                isFav={isFav}
-                onToggle={() => handleToggleFavoritePress(item.number)}
-              />
-            </RightAligned>
-          </PressableBookGrid>
-        );
-      }
-
-      return (
-        <PressableBookList
-          onPress={() => handleRowPress(item.number, item.title)}
-        >
-          <ListCoverImage
-            source={{
-              uri:
-                item.cover || 'https://via.placeholder.com/60x90?text=No+Image',
-            }}
-          />
-          <Flex1>
-            <BookTitle numberOfLines={1}>{item.title}</BookTitle>
-            <Text>{item.releaseDate}</Text>
-          </Flex1>
-          <FavoriteButton
-            isFav={isFav}
-            onToggle={() => handleToggleFavoritePress(item.number)}
-          />
-        </PressableBookList>
-      );
-    },
-    [favSet, handleRowPress, handleToggleFavoritePress, isGrid],
-  );
-
   if (isLoading) return <StateText>{t('HOME_PAGE.loading_books')}</StateText>;
   if (isError)
     return <StateText>{t('HOME_PAGE.error_loading_books')}</StateText>;
@@ -125,7 +65,7 @@ const Home = ({ navigation }: NavigationProps) => {
   return (
     <HomeContainer>
       <LanguageSwitcher />
-      <ChangeModePress onPress={() => setGrid(!isGrid)}>
+      <ChangeModePress onPress={() => setGrid(prev => !prev)}>
         <ChangeModeText>{t('HOME_PAGE.switch_display')}</ChangeModeText>
       </ChangeModePress>
       <SearchInput
@@ -134,20 +74,31 @@ const Home = ({ navigation }: NavigationProps) => {
         onChangeText={setSearchText}
       />
       <DropDownSort sortBy={sortBy} onChange={setSortBy} />
-      <FlashList<Book>
-        data={sortedList}
-        keyExtractor={item => String(item.number)}
-        estimatedItemSize={isGrid ? 260 : 110}
-        numColumns={isGrid ? 3 : 1}
-        contentContainerStyle={{ padding: isGrid ? 6 : 0 }}
-        keyboardShouldPersistTaps="handled"
-        extraData={[favIds, isGrid]}
-        ItemSeparatorComponent={!isGrid ? () => <ItemSeparator /> : undefined}
-        ListEmptyComponent={
-          <StateText>{t('HOME_PAGE.no_books_found')}</StateText>
-        }
-        renderItem={renderBookItem}
-      />
+      <ScrollView contentContainerStyle={{ padding: 8 }}>
+        {isGrid ? (
+          <BookGrid>
+            {sortedList.map(item => (
+              <GridBookItem
+                key={item.number}
+                book={item}
+                isFav={favSet.has(item.number)}
+                onPress={() => handleRowPress(item.number, item.title)}
+                onToggleFavorite={() => handleToggleFavoritePress(item.number)}
+              />
+            ))}
+          </BookGrid>
+        ) : (
+          sortedList.map(item => (
+            <ListBookItem
+              key={item.number}
+              book={item}
+              isFav={favSet.has(item.number)}
+              onPress={() => handleRowPress(item.number, item.title)}
+              onToggleFavorite={() => handleToggleFavoritePress(item.number)}
+            />
+          ))
+        )}
+      </ScrollView>
     </HomeContainer>
   );
 };

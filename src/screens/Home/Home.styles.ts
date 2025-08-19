@@ -21,17 +21,10 @@ export const ChangeModeText = styled.Text(({ theme }) => ({
   textAlign: 'center',
 }));
 
-export const PressableBookGrid = styled.TouchableOpacity({
-  flex: 1,
-  margin: 6,
-  backgroundColor: '#fff',
-  borderRadius: 10,
-  padding: 10,
-  shadowColor: '#000',
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 2 },
-  elevation: 2,
+export const BookGrid = styled.View({
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
 });
 
 export const PressableBookList = styled.Pressable({
