@@ -1,21 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  FlatList,
-  Image,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { FlatList, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { selectFavoriteIds } from '../features/favoritesSlice';
-import { useGetBooksQuery } from '../api/booksApi';
-import { useDebouncedValue } from '../hooks/useDebouncedValue';
-import { Book, NavigationProps } from '../types/navigation';
-import DropDownSort from '../components/DropDownSort';
-import { sortBooks, SortBy } from '../functions';
+import { RootState } from '../../store';
+import { selectFavoriteIds } from '../../features/favoritesSlice';
+import { useGetBooksQuery } from '../../api/booksApi';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import { Book, NavigationProps } from '../../types/navigation';
+import DropDownSort from '../../components/DropDownSort/DropDownSort';
+import { sortBooks, SortBy } from '../../functions';
 import { useTranslation } from 'react-i18next';
+import {
+  SearchInput,
+  ItemSeparator,
+  PaddedText,
+  EmptyWrap,
+  CoverThumb,
+  Flex1,
+  BookTitle,
+} from '../Favorites/Favorites.styles';
+import { FavoriteRowPress } from '../Favorites/Favorites.styles';
 
 const Favorites = ({ navigation }: NavigationProps) => {
   const favIds = useSelector((state: RootState) => selectFavoriteIds(state));
@@ -53,70 +56,49 @@ const Favorites = ({ navigation }: NavigationProps) => {
   const renderFavoriteItem = useCallback(
     ({ item }: { item: Book }) => {
       return (
-        <Pressable
+        <FavoriteRowPress
           onPress={() =>
             navigation.navigate('BookDetails', { number: item.number })
           }
-          style={{
-            flexDirection: 'row',
-            padding: 12,
-            gap: 12,
-            alignItems: 'center',
-          }}
         >
-          <Image
+          <CoverThumb
             source={{
               uri:
                 item.cover || 'https://via.placeholder.com/60x90?text=No+Image',
             }}
-            style={{ width: 60, height: 90, borderRadius: 6 }}
           />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontWeight: '600' }} numberOfLines={1}>
-              {item.title}
-            </Text>
+          <Flex1>
+            <BookTitle numberOfLines={1}>{item.title}</BookTitle>
             <Text>{item.releaseDate}</Text>
-          </View>
+          </Flex1>
           <Text>★</Text>
-        </Pressable>
+        </FavoriteRowPress>
       );
     },
     [navigation],
   );
 
   if (isLoading)
-    return (
-      <Text style={{ padding: 16 }}>
-        {t('FAVORITE_PAGE.loading_favorites')}
-      </Text>
-    );
+    return <PaddedText>{t('FAVORITE_PAGE.loading_favorites')}</PaddedText>;
 
   if (isError)
     return (
-      <Text style={{ padding: 16 }}>
-        {t('FAVORITE_PAGE.error_loading_favorites')}
-      </Text>
+      <PaddedText>{t('FAVORITE_PAGE.error_loading_favorites')}</PaddedText>
     );
 
   if (!favBooks.length)
     return (
-      <View style={{ padding: 16 }}>
+      <EmptyWrap style={{ padding: 16 }}>
         <Text>{t('FAVORITE_PAGE.no_favorites_yet')}</Text>
-      </View>
+      </EmptyWrap>
     );
 
   return (
     <>
-      <TextInput
+      <SearchInput
         placeholder={t('FAVORITE_PAGE.search_by_title_or_desc')}
         value={searchText}
         onChangeText={setSearchText}
-        style={{
-          margin: 12,
-          padding: 10,
-          backgroundColor: '#eee',
-          borderRadius: 10,
-        }}
       />
       <DropDownSort sortBy={sortBy} onChange={setSortBy} />
       <FlatList<Book>
@@ -124,11 +106,9 @@ const Favorites = ({ navigation }: NavigationProps) => {
         keyExtractor={book => String(book.number)}
         keyboardShouldPersistTaps={'handled'}
         ListEmptyComponent={
-          <Text style={{ padding: 16 }}>{t('FAVORITE_PAGE.no_results')}</Text>
+          <PaddedText>{t('FAVORITE_PAGE.no_results')}</PaddedText>
         }
-        ItemSeparatorComponent={() => (
-          <View style={{ height: 1, backgroundColor: '#eee' }} />
-        )}
+        ItemSeparatorComponent={() => <ItemSeparator />}
         renderItem={renderFavoriteItem}
       />
     </>

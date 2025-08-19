@@ -10,7 +10,7 @@ const resources = {
   en: { common: enCommon },
 } as const;
 
-const fallback = 'en';
+const fallback = 'he';
 const deviceLang = RNLocalize.getLocales?.()[0]?.languageCode ?? fallback;
 
 const i18n = i18next.createInstance();

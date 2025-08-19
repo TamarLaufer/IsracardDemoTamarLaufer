@@ -11,7 +11,8 @@
     "loading_books": "טוען ספרים...",
     "search_by_title": "חיפוש לפי שם הספר",
     "no_books_found": "לא נמצאו ספרים",
-    "title": "דף הבית"
+    "title": "דף הבית",
+    "switch_display": "שינוי סגנון תצוגה"
   },
   "FAVORITE_PAGE": {
     "title": "מועדפים",
@@ -28,7 +29,8 @@
     "not_found": "לא נמצא ספר",
     "release_label": "תאריך יציאה:",
     "pages_label": "עמודים:",
-    "description_label": "תיאור"
+    "description_label": "תיאור",
+    "about_book": "על הספר:"
   },
   "COMPONENTS": {
     "DROPDOWN": {

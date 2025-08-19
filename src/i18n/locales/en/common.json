@@ -11,7 +11,8 @@
     "loading_books": "Loading books...",
     "search_by_title": "Search by title",
     "no_books_found": "No books found",
-    "title": "Home"
+    "title": "Home",
+    "switch_display": "Switch display"
   },
   "FAVORITE_PAGE": {
     "title": "Favorites",
@@ -28,7 +29,8 @@
     "not_found": "Book not found",
     "release_label": "Release:",
     "pages_label": "Pages:",
-    "description_label": "Description"
+    "description_label": "Description",
+    "about_book": "About the book"
   },
   "COMPONENTS": {
     "DROPDOWN": {
